@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+{% if user is defined %}
+
+<center><div id="message"></div></center>
+<div id="container" class="container mt-5" style = "width: 1100px "></div>
+<script type="text/javascript">
+
+$(function(){
+
+	$("#container").tabulator({
+	pagination: "local",
+	paginationSize: 10,
+	
+    columns:[
+        {title:"Book ID", field:"bookID", sorter:"number",headerFilter:"number",width:85},
+        {title:"ISBN", field:"ISBN13", sorter:"number",headerFilter:"input",width:150},
+        {title:"Publication Year", field:"original_Publication_Year", sorter:"number",headerFilter:"number",headerFilterPlaceholder:"At Least",headerFilterFunc:">=",width:70},
+        {title:"Book Title", field:"title", sorter:"string",headerFilter:"input"},
+        {title:"Average Rating", field:"average_Rating", sorter:"number", formatter: "star",formatterParams:{color:'#80d0ff'},headerFilter:"number",headerFilterPlaceholder:"At Least",headerFilterFunc:">=",width:125},
+        {title:"Authors", field:"authors", width:100,headerFilter:"input"},
+        
+        
+        {title:"Ratings Count", field:"ratings_Count", sorter:"number",formatter:"progress",formatterParams:{max:4942365,color:'#80d0ff'},headerFilter:"number",headerFilterPlaceholder:"At Least",headerFilterFunc:">="},
+        {title:"To Read",field:"to_read" , cellClick:function(e,cell){
+ 		  	var book_id=cell.getRow().getCell('bookID').getValue();
+ 		  	var data={'book_id':book_id}
+ 		  	
+
+ 		   	$.ajax({
+ 		  		type: 'POST',
+ 		  		
+ 		  		url: "{{url_for('add_to_read')}}",
+ 		  		data: JSON.stringify(data),
+        		contentType: 'application/json;charset=UTF-8',
+        		dataType: 'json',
+ 		  		success: function(response){
+ 		  			console.log(response);
+ 		  			$('#message').html("<div class='alert alert-success' style='width: 1100px'>Book with bookID " + book_id + " added to wishlist!</div>");
+ 	
+ 		  			cell.getRow().getCell('to_read').getElement().css({"background-color":"#80d0ff"});
+ 		  		},
+ 		  		error: function(error){
+ 		  			console.log(error);
+ 		  			$('#message').html("<div class='alert alert-danger' style='width: 1100px'>Error adding book to wishlist.</div>");
+ 		  		}
+
+ 		  	});
+
+
+ 		  	
+    }}
+    ],
+});
+$('#container').tabulator("setData","{{url_for('load_data')}}");
+
+});
+</script>
+{% endif %}
+{% endblock %}

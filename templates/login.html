@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="container mt-4" style="width: 500px;">
+
+  {% from "includes/_formhelpers.html" import render_field %}
+  <form method="POST" action="" class="form-group" autocomplete="off">
+
+      {{ form.hidden_tag() }}
+      {{render_field(form.email, class="form-control")}}
+      {{render_field(form.password, class="form-control")}}
+
+      <p><input type="submit" class="btn btn-success" value="Login"></p>
+  
+  </form>
+</div>
+
+{% endblock %}

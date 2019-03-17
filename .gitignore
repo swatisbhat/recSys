@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+.ipynb_checkpoints/
+
+Import_To_DB/
+cleanup/
+data/
+books.json
+tabulator-master/
+static/
+

@@ -1,0 +1,56 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% if user is defined %}
+<center><div id="message"></div></center>
+<h1 class="navbar-brand h1" style="margin-left: 8rem;margin-top: 1rem;"> My Wishlist!</h1>
+<div id="container" class="container mt-3" style = "width: 1100px "></div>
+<script type="text/javascript">
+
+$(function(){
+
+	$("#container").tabulator({
+	pagination: "local",
+
+	paginationSize: 7,
+  layout: "fitColumns",
+	
+    columns:[
+        {title:"Book ID", field:"bookID", sorter:"number",headerFilter:"number",width:110},
+        {title:"Book Title", field:"title", sorter:"string",headerFilter:"input"},
+        {title:"Authors", field:"authors", headerFilter:"input"},
+        {title:"Mark as Read",field:"read",width:150, cellClick:function(e,cell){
+ 		  	var book_id=cell.getRow().getCell('bookID').getValue();
+ 		  	var data={'book_id':book_id}
+ 		  	
+ 		   	$.ajax({
+ 		  		type: 'POST',
+ 		  		
+ 		  		url: $SCRIPT_ROOT+'/add_read',
+ 		  		data: JSON.stringify(data),
+        		contentType: 'application/json;charset=UTF-8',
+ 		  		success: function(response){
+ 		  			console.log(response);
+ 		  			$('#message').html("<div class='alert alert-success' style='width: 1100px'>Book with bookID " + book_id + " marked read, will be removed from wishlist</div>")
+
+ 		  			cell.getRow().getCell('read').getElement().css({"background-color":"#80d0ff"});
+ 		  		},
+ 		  		error: function(error){
+ 		  			console.log(error);
+ 		  			$('#message').html("<div class='alert alert-danger' style='width: 1100px'>Error removing book from wishlist.</div>");
+ 		  		}
+
+ 		  	});
+
+ 		  	
+    }}
+    ],
+});
+$('#container').tabulator("setData","{{url_for('load_profile_data')}}");
+
+});
+
+
+</script>
+
+{% endif %}
+{% endblock %}
